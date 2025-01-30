@@ -1,0 +1,68 @@
+namespace MySystem.Compounds
+{
+    public class CreateUpdateCompoundDtoValidator : AbstractValidator<CreateUpdateCompoundDto>
+    {
+        public CreateUpdateCompoundDtoValidator()
+        {
+            RuleFor(x => x.NameAr)
+                .NotEmpty().WithMessage("Name in Arabic is required.");
+
+            RuleFor(x => x.Code)
+                .NotEmpty().WithMessage("Code is required.")
+                .MaximumLength(2).WithMessage("ASDASDASDASD");
+
+        }
+    }
+}
+
+
+namespace MySystem;
+
+[DependsOn(
+    typeof(CompoundSystemDomainModule),
+    typeof(CompoundSystemApplicationContractsModule),
+    typeof(AbpPermissionManagementApplicationModule),
+    typeof(AbpFeatureManagementApplicationModule),
+    typeof(AbpIdentityApplicationModule),
+    typeof(AbpAccountApplicationModule),
+    typeof(AbpTenantManagementApplicationModule),
+    typeof(AbpSettingManagementApplicationModule),
+    typeof(AbpFluentValidationModule) ,
+    typeof(AbpValidationModule)
+)]
+public class CompoundSystemApplicationModule : AbpModule
+{
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        var services = context.Services;
+
+        services.AddValidatorsFromAssemblyContaining<CreateUpdateCompoundDtoValidator>();
+      
+        Configure<AbpValidationOptions>(options =>
+        {
+            options.IgnoredTypes.Remove(typeof(CreateUpdateCompoundDto)); // Ensure DTO is not ignored
+        });
+
+        // AutoMapper configuration
+        Configure<AbpAutoMapperOptions>(options =>
+        {
+            options.AddMaps<CompoundSystemApplicationModule>();
+        });
+
+       
+
+
+    }
+}
+namespace MySystem.Compounds
+{
+    public class CreateUpdateCompoundDto
+    {
+        public string Code { get; set; }
+        public string NameAr { get; set; }
+        public string NameEn { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public Guid ManagerId { get; set; }
+    }
+}
